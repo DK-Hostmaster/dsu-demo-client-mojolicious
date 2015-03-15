@@ -1,6 +1,7 @@
 #!/usr/bin/env perl
 
 use Mojolicious::Lite;
+use Mojo::UserAgent;
 
 our $VERSION = '1.0.0';
 
@@ -38,15 +39,13 @@ get '/prepare' => sub {
   my $params = $self->req->params->to_hash;
 
   if ($params->{action} and $params->{action} eq 'delete') {
+
     $params->{'keytag.1'}    = 'DS_DELETE';
     $params->{'algorithm.1'}  = 'DS_DELETE';
     $params->{'digest_type.1'} = 'DS_DELETE';
     $params->{'digest.1'}     = 'DS_DELETE';
 
-    # deleting navigational helper parameter
-    #delete $params->{'action'};
-
-    foreach my $param (grep !/(\w+\.1|domain|userid|password)/, keys %{$params}) {
+    foreach my $param (grep !/(\w+\.1|domain|userid|password|endpoint)/, keys %{$params}) {
         delete $params->{$param};        
     }
   }
@@ -54,13 +53,66 @@ get '/prepare' => sub {
   $self->render('prepare', 
     version  => $VERSION,
     params   => $params,
-    endpoint => $endpoint,
   );
+};
+
+get '/submit' => sub {
+    my $self = shift;
+
+    my $ua = Mojo::UserAgent->new();
+
+    my $message = 'Here the result will be presented if possible';
+    my $class   = 'alert alert-info';
+    my $code    = 'ENOCODE';
+    my $tx = $ua->post($endpoint);
+
+    if (my $res = $tx->success) {
+        my $result = $res->body;
+        $code   = $tx->res->code;
+
+        app->log->info('Request succeeded, evaluating response (hack)');
+
+        #here be json/text/xml parsing code, but since we only want to demonstrate protocol 
+        #and leave the actual use of the result up to the user, we just hack it
+        if ($code == 200) {
+            $message  = $result;
+            $class    = 'alert alert-success';
+
+        } elsif ($code == 400) {
+            $code    = $tx->res->headers->header('X-DSU');
+            $message = $result;
+            $class   = 'alert alert-warning';
+        }
+
+    } else {
+        $message  = $tx->error->{message};
+        $code     = $tx->error->{code};
+        $class    = 'alert alert-danger';
+    }
+
+    $self->render('submit', 
+        version => $VERSION,
+        message => $message,
+        code    => $code,
+        class   => $class,
+    );
 };
 
 app->start;
 
 __DATA__
+
+@@submit.html.ep
+% layout 'default';
+% title 'submit';
+
+<form id="form" class="form-horizontal" role="form" action="/" method="GET" accept-charset="UTF-8">
+
+<div class="<%= $class %>" role="alert"><%= $code %>: <%= $message %></div>
+
+<button id="edit" type="submit" class="btn btn-default">Edit the request <span class="glyphicon glyphicon-wrench"></span></button>
+
+</form>
 
 @@prepare.html.ep
 % layout 'default';
@@ -92,7 +144,7 @@ __DATA__
 
 </div>
 
-<button id="send" type="button" name="send" id="send" class="btn btn-primary">Submit the request to: <%= $endpoint %> <span class="glyphicon glyphicon-send"></span></button>
+<button id="send" type="button" name="send" id="send" class="btn btn-primary">Submit the request to: <%= $params->{endpoint} %> <span class="glyphicon glyphicon-send"></span></button>
 <button id="edit" type="submit" class="btn btn-default">Edit the request <span class="glyphicon glyphicon-wrench"></span></button>
 
 </form>
@@ -104,42 +156,34 @@ __DATA__
     <fieldset id="fieldset.<%= $number %>">
     <legend>Keyset <%= $number %></legend>
     <div class="form-group" style="width:96%;margin-left: auto;margin-right: auto;">
-        <!--<div class="control-group">-->
-            <div class="col-xs-2">
-            <% my $param = "keytag.$number"; %>
-            <label class="control-label" for="keytag">Keytag:</label>
-            <input name="keytag.<%= $number %>" id="keytag.<%= $number %>" class="form-control" placeholder="keytag" type="text" name="keytag" value="<%= $params->{$param} %>" />
-            </div>
-        <!--</div>-->
-        <!--<div class="control-group">-->
-            <div class="col-xs-6">
-            <% $param = "digest.$number"; %>
-            <label class="control-label" for="digest">Digest:</label>
-            <input name="digest.<%= $number %>" id="digest.<%= $number %>" class="form-control" placeholder="digest" type="text" name="digest" value="<%= $params->{$param} %>" />
-            </div>
-        <!--</div>-->
-        <!--<div class="control-group">-->
-            <div class="col-xs-2">
-            <% $param = "digest_type.$number"; %>
-            <label class="control-label" for="digest_type">Digest type:</label>
-            <select name="digest_type.<%= $number %>" id="digest_type.<%= $number %>" class="form-control">
-                % foreach my $digest_type (keys %{$digest_types}) {
-                %= include 'option', key => $digest_type, value => $digest_types->{$digest_type};
-                % }
-            </select>
-            </div>
-        <!--</div>-->
-        <!--<div class="control-group">-->
-            <div class="col-xs-2">
-            <% $param = "algorithm.$number"; %>
-            <label class="control-label" for="algorithm">Algorithm:</label>
-            <select name="algorithm.<%= $number %>" id="algorithm.<%= $number %>" class="form-control">
-                % foreach my $algorithm (keys %{$algorithms}) {
-                %= include 'option', key => $algorithm, value => $algorithms->{$algorithm};
-                % }
-            </select>
-            </div>
-        <!--</div>-->
+        <div class="col-xs-2">
+        <% my $param = "keytag.$number"; %>
+        <label class="control-label" for="keytag">Keytag:</label>
+        <input name="keytag.<%= $number %>" id="keytag.<%= $number %>" class="form-control" placeholder="keytag" type="text" name="keytag" value="<%= $params->{$param} %>" />
+        </div>
+        <div class="col-xs-6">
+        <% $param = "digest.$number"; %>
+        <label class="control-label" for="digest">Digest:</label>
+        <input name="digest.<%= $number %>" id="digest.<%= $number %>" class="form-control" placeholder="digest" type="text" name="digest" value="<%= $params->{$param} %>" />
+        </div>
+        <div class="col-xs-2">
+        <% $param = "digest_type.$number"; %>
+        <label class="control-label" for="digest_type">Digest type:</label>
+        <select name="digest_type.<%= $number %>" id="digest_type.<%= $number %>" class="form-control">
+            % foreach my $digest_type (keys %{$digest_types}) {
+            %= include 'option', key => $digest_type, value => $digest_types->{$digest_type};
+            % }
+        </select>
+        </div>
+        <div class="col-xs-2">
+        <% $param = "algorithm.$number"; %>
+        <label class="control-label" for="algorithm">Algorithm:</label>
+        <select name="algorithm.<%= $number %>" id="algorithm.<%= $number %>" class="form-control">
+            % foreach my $algorithm (keys %{$algorithms}) {
+            %= include 'option', key => $algorithm, value => $algorithms->{$algorithm};
+            % }
+        </select>
+        </div>
     </div>
     </fieldset>
 
@@ -150,6 +194,7 @@ __DATA__
     <form id="form" class="form-horizontal" role="form" action="/prepare" method="GET" accept-charset="UTF-8">
     <!-- this hidden field is manipulated from JS (button clicks) -->
     <input type="hidden" id="action" name="action" value="" />
+    <input type="hidden" id="endpoint" name="endpoint" value="<%= $endpoint %>" />
 
     <div class="form-group">
         <div class="control-group">
@@ -231,8 +276,8 @@ __DATA__
 
         // for handling actual submit to the endpoint
         function send_to_endpoint() {
-            $('#form').attr("action", '<%= $endpoint %>');
-            $('#form').attr("method", 'POST'); 
+            console.log("Calling submit");
+            $('#form').attr("action", '/submit');
             $("#form").submit();
         };
 
@@ -255,6 +300,6 @@ __DATA__
             }
         );      
     </script>
-
+    
   </body>
 </html>
