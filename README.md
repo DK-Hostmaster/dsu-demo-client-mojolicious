@@ -21,7 +21,6 @@ Perl modules are used all available from CPAN.
 
 - [Readonly](https://metacpan.org/pod/Readonly)
 - [Mojo::UserAgent](https://metacpan.org/pod/Mojo::UserAgent)
-- [Mojolicious::Plugin::ConsoleLogger](https://metacpan.org/pod/Mojolicious::Plugin::ConsoleLogger)
 
 In addition to the Perl modules, the client uses [Twitter Bootstrap](http://getbootstrap.com/) and hereby jQuery. These are automatically downloaded via CDNs and are not distributed with the client software.
 
