@@ -229,7 +229,7 @@ __DATA__
 
     </form>
 
-@@ layouts/javascript.html.ep
+@@ javascript.html.ep
     <script language="javascript">
 
         // for handling proper reset (clear) of the form
@@ -303,7 +303,7 @@ __DATA__
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 
-    %= include 'layouts/javascript'
+    %= include 'javascript'
     
   </body>
 </html>
