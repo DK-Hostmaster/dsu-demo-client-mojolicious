@@ -2,6 +2,7 @@
 
 use Mojolicious::Lite;
 use Mojo::UserAgent;
+use Data::Dumper;
 
 our $VERSION = '1.0.0';
 
@@ -16,10 +17,13 @@ my $digest_types = {
     'SHA-256' => 2,
 };
 
-get '/' => sub {
+any '/' => sub {
   my $self = shift;
 
   my $params = $self->req->params->to_hash;
+
+  $self->app->log->debug('Ingoing parameters (/):');
+  $self->app->log->debug(Dumper $params);
 
   $self->render('index', 
     version      => $VERSION,
@@ -38,6 +42,9 @@ get '/prepare' => sub {
 
   my $params = $self->req->params->to_hash;
 
+  $self->app->log->debug('Ingoing parameters (/prepare):');
+  $self->app->log->debug(Dumper $params);
+
   if ($params->{action} and $params->{action} eq 'delete') {
 
     $params->{'keytag.1'}    = 'DS_DELETE';
@@ -50,7 +57,7 @@ get '/prepare' => sub {
     }
   }
 
-  $self->render('prepare', 
+  $self->render('prepare',
     version  => $VERSION,
     params   => $params,
   );
@@ -145,12 +152,16 @@ __DATA__
 </div>
 
 <button id="send" type="button" name="send" id="send" class="btn btn-primary">Submit the request to: <%= $params->{endpoint} %> <span class="glyphicon glyphicon-send"></span></button>
+% if ($params->{'keytag.1'} and $params->{'keytag.1'} eq 'DS_DELETE') {
+<button id="skip" type="button" class="btn btn-default">Skip the delete request <span class="glyphicon glyphicon-wrench"></span></button>
+% } else {
 <button id="edit" type="submit" class="btn btn-default">Edit the request <span class="glyphicon glyphicon-wrench"></span></button>
+% }
 
 </form>
 
 @@option.html.ep
-<option value="<%= $value %>"><%= $key %></option>
+<option value="<%= $value %>" <%= $selected %>><%= $key %>(<%= $value %>)</option>
 
 @@keyset.html.ep
     <fieldset id="fieldset.<%= $number %>">
@@ -171,7 +182,11 @@ __DATA__
         <label class="control-label" for="digest_type">Digest type:</label>
         <select name="digest_type.<%= $number %>" id="digest_type.<%= $number %>" class="form-control">
             % foreach my $digest_type (keys %{$digest_types}) {
-            %= include 'option', key => $digest_type, value => $digest_types->{$digest_type};
+            %     if ($params->{'digest_type.'.$number} and $params->{'digest_type.'.$number} == $digest_types->{$digest_type}) {
+            %=        include 'option', key => $digest_type, value => $digest_types->{$digest_type}, selected => 'selected';
+            %     } else {
+            %=        include 'option', key => $digest_type, value => $digest_types->{$digest_type}, selected => '';
+            %     }
             % }
         </select>
         </div>
@@ -180,7 +195,11 @@ __DATA__
         <label class="control-label" for="algorithm">Algorithm:</label>
         <select name="algorithm.<%= $number %>" id="algorithm.<%= $number %>" class="form-control">
             % foreach my $algorithm (keys %{$algorithms}) {
-            %= include 'option', key => $algorithm, value => $algorithms->{$algorithm};
+            %     if ($params->{'algorithm.'.$number} and $params->{'algorithm.'.$number} == $algorithms->{$algorithm}) {
+            %=        include 'option', key => $algorithm, value => $algorithms->{$algorithm}, selected => 'selected';
+            %     } else {
+            %=        include 'option', key => $algorithm, value => $algorithms->{$algorithm}, selected => '';
+            %     }
             % }
         </select>
         </div>
@@ -260,6 +279,20 @@ __DATA__
             }
         );
 
+        // for handling click of the delete button
+        $('#edit').on('click', function() {
+                $('#form').attr("action", '/');
+                $("#form").attr("method", 'post');
+            }
+        );
+
+        // for handling click of the delete button
+        $('#skip').on('click', function() {
+                $("#form").find('input:hidden').val('');
+                $("#form").submit();
+            }
+        );
+
         // for handling click of the clear button
         $('#clear').on('click', function() {
                 resetForm($('#form'));
@@ -299,6 +332,7 @@ __DATA__
     </div>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <!-- script src="/mojo/jquery/jquery.js"></script -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
