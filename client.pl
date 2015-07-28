@@ -58,8 +58,8 @@ get '/prepare' => sub {
   }
 
   $self->render('prepare',
-    version  => $VERSION,
-    params   => $params,
+    version => $VERSION,
+    params  => $params,
   );
 };
 
@@ -161,7 +161,7 @@ __DATA__
 </form>
 
 @@option.html.ep
-<option value="<%= $value %>" <%= $selected %>><%= $key %>(<%= $value %>)</option>
+<option value="<%= $value %>" <%= $selected %>><%= $key %></option>
 
 @@keyset.html.ep
     <fieldset id="fieldset.<%= $number %>">
@@ -178,9 +178,16 @@ __DATA__
         <input name="digest.<%= $number %>" id="digest.<%= $number %>" class="form-control" placeholder="digest" type="text" name="digest" value="<%= $params->{$param} %>" />
         </div>
         <div class="col-xs-2">
-        <% $param = "digest_type.$number"; %>
         <label class="control-label" for="digest_type">Digest type:</label>
+        % my $digest_type_selected = 0;
+        % if ($params->{'digest_type.'.$number}) {
+        %     $digest_type_selected++;
+        % }
         <select name="digest_type.<%= $number %>" id="digest_type.<%= $number %>" class="form-control">
+            % if ($digest_type_selected == 0) {
+            %=  include 'option', key => '-', value => '', selected => 'selected';
+            %   $digest_type_selected++;
+            % }
             % foreach my $digest_type (keys %{$digest_types}) {
             %     if ($params->{'digest_type.'.$number} and $params->{'digest_type.'.$number} == $digest_types->{$digest_type}) {
             %=        include 'option', key => $digest_type, value => $digest_types->{$digest_type}, selected => 'selected';
@@ -190,10 +197,18 @@ __DATA__
             % }
         </select>
         </div>
+
         <div class="col-xs-2">
-        <% $param = "algorithm.$number"; %>
         <label class="control-label" for="algorithm">Algorithm:</label>
+        % my $algorithm_selected = 0;
+        % if ($params->{'algorithm.'.$number}) {
+        %     $algorithm_selected++;
+        % }
         <select name="algorithm.<%= $number %>" id="algorithm.<%= $number %>" class="form-control">
+            % if ($algorithm_selected == 0) {
+            %= include 'option', key => '-', value => '', selected => 'selected';
+            %  $digest_type_selected++;
+            % }
             % foreach my $algorithm (keys %{$algorithms}) {
             %     if ($params->{'algorithm.'.$number} and $params->{'algorithm.'.$number} == $algorithms->{$algorithm}) {
             %=        include 'option', key => $algorithm, value => $algorithms->{$algorithm}, selected => 'selected';
@@ -254,9 +269,14 @@ __DATA__
         // for handling proper reset (clear) of the form
         function resetForm($form) {
             // http://stackoverflow.com/questions/680241/resetting-a-multi-stage-form-with-jquery
-            $form.find('input:text, input:password, input:file, select textarea').val('');
+            $form.find('input:text, input:password, input:file, select, textarea').val('');
+            $form.find('option[value=""]').remove();
+
             $form.find('input:radio, input:checkbox')
-            .removeAttr('checked').removeAttr('selected');
+              .removeAttr('checked')
+              .removeAttr('selected');
+
+            $form.find('select').append(new Option('-', '', true, true));
         };
 
         // for handling actual submit to the endpoint
