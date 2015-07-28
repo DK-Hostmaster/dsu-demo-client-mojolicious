@@ -2,7 +2,6 @@
 
 use Mojolicious::Lite;
 use Mojo::UserAgent;
-use Data::Dumper;
 
 our $VERSION = '1.0.0';
 
@@ -22,9 +21,6 @@ any '/' => sub {
 
   my $params = $self->req->params->to_hash;
 
-  $self->app->log->debug('Ingoing parameters (/):');
-  $self->app->log->debug(Dumper $params);
-
   $self->render('index', 
     version      => $VERSION,
     domain       => 'test.dk',
@@ -41,9 +37,6 @@ get '/prepare' => sub {
   my $self = shift;
 
   my $params = $self->req->params->to_hash;
-
-  $self->app->log->debug('Ingoing parameters (/prepare):');
-  $self->app->log->debug(Dumper $params);
 
   if ($params->{action} and $params->{action} eq 'delete') {
 
