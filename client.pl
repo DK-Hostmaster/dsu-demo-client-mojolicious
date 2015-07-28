@@ -132,8 +132,8 @@ __DATA__
 <!-- Key parameters -->
 % for my $number (1 .. 5) {
 
-    <!-- We only want keysets with all 4 parameters defined -->
-    % if ($params->{"keytag.$number"} and $params->{"digest.$number"} and $params->{"digest_type.$number"} and $params->{"algorithm.$number"}) {
+    <!-- We respect keysets with any parameters defined -->
+    % if ($params->{"keytag.$number"} or $params->{"digest.$number"} or $params->{"digest_type.$number"} or $params->{"algorithm.$number"}) {
         % foreach my $param (grep /$number/, keys %{$params}) {
             <code><%= $param %> = <%= $params->{$param} %></code><br/>
             <input type="hidden" name="<%= $param %>" value="<%= $params->{$param} %>" />
