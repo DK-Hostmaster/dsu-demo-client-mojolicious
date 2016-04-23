@@ -23,7 +23,7 @@ any '/' => sub {
 
   $self->render('index', 
     version      => $VERSION,
-    domain       => 'test.dk',
+    domain       => 'eksempel.dk',
     userid       => 'TESTUSER-DK',
     password     => 'supersecret',
     params       => $params,
@@ -61,6 +61,8 @@ get '/submit' => sub {
 
     my $ua = Mojo::UserAgent->new();
 
+    my $params = $self->req->params->to_hash;
+
     my $message = 'Here the result will be presented if possible';
     my $class   = 'alert alert-info';
     my $code    = 'ENOCODE';
@@ -75,19 +77,22 @@ get '/submit' => sub {
         #here be json/text/xml parsing code, but since we only want to demonstrate protocol 
         #and leave the actual use of the result up to the user, we just hack it
         if ($code == 200) {
-            $message  = $result;
+            $message  = "Upload of DS records was succesful $result";
             $class    = 'alert alert-success';
+            app->log->info($code.' '.$message);
 
         } elsif ($code == 400) {
             $code    = $tx->res->headers->header('X-DSU');
-            $message = $result;
+            $message = "Upload of DS records was unsuccesful $message";
             $class   = 'alert alert-warning';
+            app->log->info($code.' '.$message);
         }
 
     } else {
-        $message  = $tx->error->{message};
         $code     = $tx->error->{code};
+        $message  = "Upload of DS records was unsuccesful ".$tx->error->{message};
         $class    = 'alert alert-danger';
+        app->log->info($code.' '.$message);
     }
 
     $self->render('submit', 
@@ -95,6 +100,7 @@ get '/submit' => sub {
         message => $message,
         code    => $code,
         class   => $class,
+        params  => $params,
     );
 };
 
@@ -109,6 +115,24 @@ __DATA__
 <form id="form" class="form-horizontal" role="form" action="/" method="GET" accept-charset="UTF-8">
 
 <div class="<%= $class %>" role="alert"><%= $code %>: <%= $message %></div>
+
+<!-- Key parameters -->
+% for my $number (1 .. 5) {
+
+    <!-- We respect keysets with any parameters defined -->
+    % if ($params->{"keytag.$number"} or $params->{"digest.$number"} or $params->{"digest_type.$number"} or $params->{"algorithm.$number"}) {
+        % foreach my $param (grep /$number/, keys %{$params}) {
+            <input type="hidden" name="<%= $param %>" value="<%= $params->{$param} %>" />
+        % }
+    % }
+% }
+
+<!-- Non key parameters -->
+% foreach my $param (grep !/\w+\.\d+/, keys %{$params}) {
+    % if ($params->{$param}) {
+        <input type="hidden" name="<%= $param %>" value="<%= $params->{$param} %>" />
+    % }
+% }
 
 <button id="edit" type="submit" class="btn btn-default">Edit the request <span class="glyphicon glyphicon-wrench"></span></button>
 
