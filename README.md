@@ -6,6 +6,16 @@ DK Hostmaster DSU service demo client
 
 This documentation describes version 1.0.0
 
+# INTRODUCTION
+
+This is a pretty basic client for demonstrating DK Hostmaster's DSU protocol.
+
+The protocol is a HTTP based API for uploading and deleting DS keys for a given domain for the .dk registry administered by DK Hostmaster A/S.
+
+The client is intended for demonstration and does not validate entered data in order to be able to demonstrate error scenarios as well as expected use.
+
+The client is implemented in Perl using the Mojolicious framework (see dependencies below).
+
 # USAGE
 
     $ morbo  client.pl
