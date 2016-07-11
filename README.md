@@ -1,3 +1,5 @@
+![images/main-screen.png]
+
 # NAME
 
 DK Hostmaster DSU service demo client
