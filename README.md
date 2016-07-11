@@ -40,14 +40,18 @@ The main site for this client is the Github repository.
 
 - https://github.com/DK-Hostmaster/dsu-demo-client-mojolicious
 
-For information on the service, please refer to the documentation page with
+For information on the service, please refer to service page with
 DK Hostmaster.
 
 - https://www.dk-hostmaster.dk/english/technical-administration/tech-notes/dnssec/dsu
 
+Or the DSU specification:
+
+- https://github.com/DK-Hostmaster/dsu-service-specification
+
 # COPYRIGHT
 
-This software is under copyright by DK Hostmaster A/S 2015
+This software is under copyright by DK Hostmaster A/S 2015-2016
 
 # LICENSE
 
