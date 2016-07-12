@@ -24,7 +24,19 @@ The client is implemented in Perl using the Mojolicious framework (see dependenc
 
 Open your browser at:
 
-    http://127.0.0.1:3000/
+    http://localhost:3000/
+
+# Using `docker`
+
+The application can be used using `docker`
+
+    $ docker build -t dsu-demo-client .
+
+    $ docker run --rm -p 3000:3000 dsu-demo-client
+
+Open your browser at:
+
+    http://localhost:3000/
 
 # DEPENDENCIES
 

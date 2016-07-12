@@ -1,2 +1,2 @@
-requires 'Mojolicious::Lite';
-requires 'Mojo::UserAgent';
+requires 'Mojolicious';
+#requires 'IO::Socket::SSL', '1.94';
