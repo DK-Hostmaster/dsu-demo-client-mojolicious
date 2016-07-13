@@ -20,11 +20,11 @@ The client is implemented in Perl using the Mojolicious framework (see dependenc
 
 # USAGE
 
-    $ morbo  client.pl
+    $ morbo -l https://*:3000 client.pl
 
 Open your browser at:
 
-    http://localhost:3000/
+    https://localhost:3000/
 
 # Using `docker`
 
@@ -36,7 +36,7 @@ The application can be used using `docker`
 
 Open your browser at:
 
-    http://localhost:3000/
+    https://localhost:3000/
 
 # DEPENDENCIES
 
