@@ -66,6 +66,7 @@ get '/submit' => sub {
     my $message = 'Here the result will be presented if possible';
     my $class   = 'alert alert-info';
     my $code    = 'ENOCODE';
+    my $subcode = 'ENOSUBCODE';
     my $tx = $ua->post($endpoint);
 
     if (my $res = $tx->success) {
@@ -89,16 +90,18 @@ get '/submit' => sub {
         }
 
     } else {
-        $code     = $tx->error->{code};
-        $message  = "Upload of DS records was unsuccesful ".$tx->error->{message};
-        $class    = 'alert alert-danger';
-        app->log->info($code.' '.$message);
+        $code    = $tx->error->{code};
+        $subcode = $tx->res->headers->header('X-DSU');
+        $message = "Upload of DS records was unsuccesful ".$tx->error->{message};
+        $class   = 'alert alert-danger';
+        app->log->info($code.' '.$message.'('.$subcode.')');
     }
 
     $self->render('submit', 
         version => $VERSION,
         message => $message,
         code    => $code,
+        subcode => $subcode,
         class   => $class,
         params  => $params,
     );
@@ -114,7 +117,7 @@ __DATA__
 
 <form id="form" class="form-horizontal" role="form" action="/" method="GET" accept-charset="UTF-8">
 
-<div class="<%= $class %>" role="alert"><%= $code %>: <%= $message %></div>
+<div class="<%= $class %>" role="alert"><%= $code %>: <%= $message %> (<%= $subcode %>)</div>
 
 <!-- Key parameters -->
 % for my $number (1 .. 5) {
