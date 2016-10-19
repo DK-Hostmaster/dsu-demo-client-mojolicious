@@ -3,7 +3,7 @@
 use Mojolicious::Lite;
 use Mojo::UserAgent;
 
-our $VERSION = '1.0.0';
+our $VERSION = '1.1.1';
 
 my $endpoint = 'https://dsu-sandbox.dk-hostmaster.dk/1.0';
 
@@ -45,7 +45,7 @@ get '/prepare' => sub {
     $params->{'digest_type1'} = 'DS_DELETE';
     $params->{'digest1'}     = 'DS_DELETE';
 
-    foreach my $param (grep !/(\w+\.1|domain|userid|password|endpoint)/, keys %{$params}) {
+    foreach my $param (grep !/(\w+1|domain|userid|password|endpoint)/, keys %{$params}) {
         delete $params->{$param};        
     }
   }
@@ -90,8 +90,8 @@ get '/submit' => sub {
         }
 
     } else {
-        $code    = $tx->error->{code};
-        $subcode = $tx->res->headers->header('X-DSU');
+        $code    //= $tx->error->{code};
+        $subcode //= $tx->res->headers->header('X-DSU');
         $message = "Upload of DS records was unsuccesful ".$tx->error->{message};
         $class   = 'alert alert-danger';
         app->log->info($code.' '.$message.'('.$subcode.')');
@@ -263,6 +263,14 @@ __DATA__
             <div class="col-xs-2">
             <label class="control-label" for="userid">User-id:</label>
             <input id="userid" class="form-control" placeholder="user-id" type="text" name="userid" value="<%= $userid %>" />
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="control-group">
+            <div class="col-xs-2">
+            <label class="control-label" for="password">Password:</label>
+            <input id="password" class="form-control" placeholder="password" type="password" name="password" value="<%= $password %>" />
             </div>
         </div>
     </div>

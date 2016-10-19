@@ -1,5 +1,11 @@
 # Changes log for DK Hostmaster DSU service demo client
 
+## 1.1.1 2016-10-19, bug fix release
+
+- Minor fix related to 1.0.1
+- Added missing password field
+- Improved code and subcode propagation 
+
 ## 1.1.0 2016-10-19, feature release
 
 - Sub error codes now displayed on errors [#2]
