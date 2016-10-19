@@ -40,10 +40,10 @@ get '/prepare' => sub {
 
   if ($params->{action} and $params->{action} eq 'delete') {
 
-    $params->{'keytag.1'}    = 'DS_DELETE';
-    $params->{'algorithm.1'}  = 'DS_DELETE';
-    $params->{'digest_type.1'} = 'DS_DELETE';
-    $params->{'digest.1'}     = 'DS_DELETE';
+    $params->{'keytag1'}    = 'DS_DELETE';
+    $params->{'algorithm1'}  = 'DS_DELETE';
+    $params->{'digest_type1'} = 'DS_DELETE';
+    $params->{'digest1'}     = 'DS_DELETE';
 
     foreach my $param (grep !/(\w+\.1|domain|userid|password|endpoint)/, keys %{$params}) {
         delete $params->{$param};        
@@ -120,7 +120,7 @@ __DATA__
 % for my $number (1 .. 5) {
 
     <!-- We respect keysets with any parameters defined -->
-    % if ($params->{"keytag.$number"} or $params->{"digest.$number"} or $params->{"digest_type.$number"} or $params->{"algorithm.$number"}) {
+    % if ($params->{'keytag'.$number} or $params->{'digest'.$number} or $params->{'digest_type'.$number} or $params->{'algorithm'.$number}) {
         % foreach my $param (grep /$number/, keys %{$params}) {
             <input type="hidden" name="<%= $param %>" value="<%= $params->{$param} %>" />
         % }
@@ -128,7 +128,7 @@ __DATA__
 % }
 
 <!-- Non key parameters -->
-% foreach my $param (grep !/\w+\.\d+/, keys %{$params}) {
+% foreach my $param (grep !/\w+\d+/, keys %{$params}) {
     % if ($params->{$param}) {
         <input type="hidden" name="<%= $param %>" value="<%= $params->{$param} %>" />
     % }
@@ -150,7 +150,7 @@ __DATA__
 % for my $number (1 .. 5) {
 
     <!-- We respect keysets with any parameters defined -->
-    % if ($params->{"keytag.$number"} or $params->{"digest.$number"} or $params->{"digest_type.$number"} or $params->{"algorithm.$number"}) {
+    % if ($params->{'keytag'.$number} or $params->{'digest'.$number} or $params->{'digest_type'.$number} or $params->{'algorithm'.$number}) {
         % foreach my $param (grep /$number/, keys %{$params}) {
             <code><%= $param %> = <%= $params->{$param} %></code><br/>
             <input type="hidden" name="<%= $param %>" value="<%= $params->{$param} %>" />
@@ -159,7 +159,7 @@ __DATA__
 % }
 
 <!-- Non key parameters -->
-% foreach my $param (grep !/\w+\.\d+/, keys %{$params}) {
+% foreach my $param (grep !/\w+\d+/, keys %{$params}) {
     % if ($params->{$param}) {
         <code><%= $param %> = <%= $params->{$param} %></code><br/>
         <input type="hidden" name="<%= $param %>" value="<%= $params->{$param} %>" />
@@ -169,7 +169,7 @@ __DATA__
 </div>
 
 <button id="send" type="button" name="send" id="send" class="btn btn-primary">Submit the request to: <%= $params->{endpoint} %> <span class="glyphicon glyphicon-send"></span></button>
-% if ($params->{'keytag.1'} and $params->{'keytag.1'} eq 'DS_DELETE') {
+% if ($params->{'keytag1'} and $params->{'keytag1'} eq 'DS_DELETE') {
 <button id="skip" type="button" class="btn btn-default">Skip the delete request <span class="glyphicon glyphicon-wrench"></span></button>
 % } else {
 <button id="edit" type="submit" class="btn btn-default">Edit the request <span class="glyphicon glyphicon-wrench"></span></button>
@@ -185,14 +185,14 @@ __DATA__
     <legend>Keyset <%= $number %></legend>
     <div class="form-group" style="width:96%;margin-left: auto;margin-right: auto;">
         <div class="col-xs-2">
-        <% my $param = "keytag.$number"; %>
+        <% my $param = "keytag$number"; %>
         <label class="control-label" for="keytag">Keytag:</label>
-        <input name="keytag.<%= $number %>" id="keytag.<%= $number %>" class="form-control" placeholder="keytag" type="text" name="keytag" value="<%= $params->{$param} %>" />
+        <input name="keytag<%= $number %>" id="keytag<%= $number %>" class="form-control" placeholder="keytag" type="text" name="keytag" value="<%= $params->{$param} %>" />
         </div>
         <div class="col-xs-6">
-        <% $param = "digest.$number"; %>
+        <% $param = "digest$number"; %>
         <label class="control-label" for="digest">Digest:</label>
-        <input name="digest.<%= $number %>" id="digest.<%= $number %>" class="form-control" placeholder="digest" type="text" name="digest" value="<%= $params->{$param} %>" />
+        <input name="digest<%= $number %>" id="digest<%= $number %>" class="form-control" placeholder="digest" type="text" name="digest" value="<%= $params->{$param} %>" />
         </div>
         <div class="col-xs-2">
         <label class="control-label" for="digest_type">Digest type:</label>
@@ -200,13 +200,13 @@ __DATA__
         % if ($params->{'digest_type.'.$number}) {
         %     $digest_type_selected++;
         % }
-        <select name="digest_type.<%= $number %>" id="digest_type.<%= $number %>" class="form-control">
+        <select name="digest_type<%= $number %>" id="digest_type<%= $number %>" class="form-control">
             % if ($digest_type_selected == 0) {
             %=  include 'option', key => '-', value => '', selected => 'selected';
             %   $digest_type_selected++;
             % }
             % foreach my $digest_type (keys %{$digest_types}) {
-            %     if ($params->{'digest_type.'.$number} and $params->{'digest_type.'.$number} == $digest_types->{$digest_type}) {
+            %     if ($params->{'digest_type'.$number} and $params->{'digest_type'.$number} == $digest_types->{$digest_type}) {
             %=        include 'option', key => $digest_type, value => $digest_types->{$digest_type}, selected => 'selected';
             %     } else {
             %=        include 'option', key => $digest_type, value => $digest_types->{$digest_type}, selected => '';
@@ -218,16 +218,16 @@ __DATA__
         <div class="col-xs-2">
         <label class="control-label" for="algorithm">Algorithm:</label>
         % my $algorithm_selected = 0;
-        % if ($params->{'algorithm.'.$number}) {
+        % if ($params->{'algorithm'.$number}) {
         %     $algorithm_selected++;
         % }
-        <select name="algorithm.<%= $number %>" id="algorithm.<%= $number %>" class="form-control">
+        <select name="algorithm<%= $number %>" id="algorithm<%= $number %>" class="form-control">
             % if ($algorithm_selected == 0) {
             %= include 'option', key => '-', value => '', selected => 'selected';
             %  $digest_type_selected++;
             % }
             % foreach my $algorithm (keys %{$algorithms}) {
-            %     if ($params->{'algorithm.'.$number} and $params->{'algorithm.'.$number} == $algorithms->{$algorithm}) {
+            %     if ($params->{'algorithm'.$number} and $params->{'algorithm'.$number} == $algorithms->{$algorithm}) {
             %=        include 'option', key => $algorithm, value => $algorithms->{$algorithm}, selected => 'selected';
             %     } else {
             %=        include 'option', key => $algorithm, value => $algorithms->{$algorithm}, selected => '';
