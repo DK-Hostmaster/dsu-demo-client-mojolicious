@@ -6,7 +6,7 @@ DK Hostmaster DSU service demo client
 
 # VERSION
 
-This documentation describes version 1.1.0
+This documentation describes version 1.1.1
 
 # INTRODUCTION
 
