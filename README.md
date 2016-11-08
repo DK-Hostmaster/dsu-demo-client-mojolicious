@@ -57,7 +57,7 @@ The main site for this client is the Github repository.
 For information on the service, please refer to service page with
 DK Hostmaster.
 
-- https://www.dk-hostmaster.dk/english/technical-administration/tech-notes/dnssec/dsu
+- https://www.dk-hostmaster.dk/en/dsu
 
 Or the DSU specification:
 
