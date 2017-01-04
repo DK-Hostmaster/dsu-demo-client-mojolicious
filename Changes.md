@@ -1,5 +1,10 @@
 # Changes log for DK Hostmaster DSU service demo client
 
+## 1.2.0 2017-01-04, feature release
+
+- Added enumerations of algorithms 13 and 14
+- Added enumeration of digest type 4
+
 ## 1.1.1 2016-10-19, bug fix release
 
 - Minor fix related to 1.0.1

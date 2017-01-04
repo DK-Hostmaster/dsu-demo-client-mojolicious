@@ -8,12 +8,15 @@ our $VERSION = '1.1.1';
 my $endpoint = 'https://dsu-sandbox.dk-hostmaster.dk/1.0';
 
 my $algorithms = {
-    'RSA/SHA-256' => 8, 
-    'RSA/SHA-512' => 10,
+    '8: RSA/SHA-256'                     => 8, 
+    '10: RSA/SHA-512'                    => 10,
+    '13: ECDSA Curve P-256 with SHA-256' => 13,
+    '14: ECDSA Curve P-384 with SHA-384' => 14,
 };
 my $digest_types = {
-    'SHA-1'   => 1, 
-    'SHA-256' => 2,
+    '1: SHA-1'   => 1, 
+    '2: SHA-256' => 2,
+    '4: SHA-384' => 4,
 };
 
 any '/' => sub {
