@@ -3,7 +3,7 @@
 use Mojolicious::Lite;
 use Mojo::UserAgent;
 
-our $VERSION = '1.1.1';
+our $VERSION = '1.2.0';
 
 my $endpoint = 'https://dsu-sandbox.dk-hostmaster.dk/1.0';
 
