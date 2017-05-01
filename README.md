@@ -20,11 +20,11 @@ The client is implemented in Perl using the Mojolicious framework (see dependenc
 
 # USAGE
 
-    $ morbo -l https://*:3000 client.pl
+    $ morbo -l https://*:5000 client.pl
 
 Open your browser at:
 
-    https://localhost:3000/
+    https://localhost:5000/
 
 # Using `docker`
 
@@ -32,11 +32,11 @@ The application can be used using `docker`
 
     $ docker build -t dsu-demo-client .
 
-    $ docker run --rm -p 3000:3000 dsu-demo-client
+    $ docker run --rm -p 5000:5000 dsu-demo-client
 
 Open your browser at:
 
-    https://localhost:3000/
+    https://localhost:5000/
 
 # DEPENDENCIES
 
