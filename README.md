@@ -32,7 +32,7 @@ The application can be used using `docker`
 
     $ docker build -t dsu-demo-client .
 
-    $ docker run --rm -p 5000:5000 dsu-demo-client
+    $ docker run --rm -p 5000:5000 --name dsu-demo-client dsu-demo-client
 
 Open your browser at:
 
