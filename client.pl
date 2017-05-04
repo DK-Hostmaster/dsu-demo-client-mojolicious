@@ -2,10 +2,17 @@
 
 use Mojolicious::Lite;
 use Mojo::UserAgent;
+use Readonly;
 
 our $VERSION = '1.2.0';
 
-my $endpoint = 'https://dsu-sandbox.dk-hostmaster.dk/1.0';
+# This list contains non-IANA registered RDAP servers (for test/evaluation etc.)
+# Add your own 
+Readonly::Array my @endpoints => (
+    'https://dsu-sandbox.dk-hostmaster.dk/1.0',
+    'http://localhost:3000/1.0',
+    'http://dsu-server:5000/1.0',
+);
 
 my $algorithms = {
     '8: RSA/SHA-256'                     => 8, 
@@ -32,7 +39,7 @@ any '/' => sub {
     params       => $params,
     algorithms   => $algorithms,
     digest_types => $digest_types,
-    endpoint     => $endpoint,
+    endpoints    => \@endpoints,
   );
 };
 
@@ -70,7 +77,7 @@ get '/submit' => sub {
     my $class   = 'alert alert-info';
     my $code    = 'ENOCODE';
     my $subcode = 'ENOSUBCODE';
-    my $tx = $ua->post($endpoint);
+    my $tx = $ua->post($params->{endpoint});
 
     if (my $res = $tx->success) {
         my $result = $res->body;
@@ -251,7 +258,19 @@ __DATA__
     <form id="form" class="form-horizontal" role="form" action="/prepare" method="GET" accept-charset="UTF-8">
     <!-- this hidden field is manipulated from JS (button clicks) -->
     <input type="hidden" id="action" name="action" value="" />
-    <input type="hidden" id="endpoint" name="endpoint" value="<%= $endpoint %>" />
+
+    <div class="form-group">
+    <label for="endpoint">Endpoint</label>
+    <select class="form-control" name="endpoint">
+    % foreach my $e (sort @{$endpoints}) {
+        % if ($e eq $params->{endpoint}) {
+        <option value="<%= $e %>" selected><%= $e %></option>
+        % } else {
+        <option value="<%= $e %>"><%= $e %></option>
+        % }
+    % } 
+    </select>
+    </div>
 
     <div class="form-group">
         <div class="control-group">
