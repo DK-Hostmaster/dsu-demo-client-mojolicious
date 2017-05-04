@@ -5,11 +5,13 @@
 - Added enumerations of algorithms 13 and 14
 - Added enumeration of digest type 4
 
+
 ## 1.1.1 2016-10-19, bug fix release
 
 - Minor fix related to 1.0.1
 - Added missing password field
 - Improved code and subcode propagation 
+
 
 ## 1.1.0 2016-10-19, feature release
 
