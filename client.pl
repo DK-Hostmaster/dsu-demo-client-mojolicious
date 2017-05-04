@@ -211,7 +211,7 @@ __DATA__
             %=  include 'option', key => '-', value => '', selected => 'selected';
             %   $digest_type_selected++;
             % }
-            % foreach my $digest_type (keys %{$digest_types}) {
+            % foreach my $digest_type (sort keys %{$digest_types}) {
             %     if ($params->{'digest_type'.$number} and $params->{'digest_type'.$number} == $digest_types->{$digest_type}) {
             %=        include 'option', key => $digest_type, value => $digest_types->{$digest_type}, selected => 'selected';
             %     } else {
@@ -232,7 +232,7 @@ __DATA__
             %= include 'option', key => '-', value => '', selected => 'selected';
             %  $digest_type_selected++;
             % }
-            % foreach my $algorithm (keys %{$algorithms}) {
+            % foreach my $algorithm (sort { $algorithms->{$a} <=> $algorithms->{$b} } keys %{$algorithms}) {
             %     if ($params->{'algorithm'.$number} and $params->{'algorithm'.$number} == $algorithms->{$algorithm}) {
             %=        include 'option', key => $algorithm, value => $algorithms->{$algorithm}, selected => 'selected';
             %     } else {
