@@ -1,5 +1,10 @@
 # Changes log for DK Hostmaster DSU service demo client
 
+## 1.3.0
+
+- Added sorting of select boxes
+
+
 ## 1.2.0 2017-01-04, feature release
 
 - Added enumerations of algorithms 13 and 14
