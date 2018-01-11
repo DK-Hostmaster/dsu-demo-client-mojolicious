@@ -7,7 +7,7 @@ use Readonly;
 our $VERSION = '1.2.0';
 
 # This list contains non-IANA registered RDAP servers (for test/evaluation etc.)
-# Add your own 
+# Add your own
 Readonly::Array my @endpoints => (
     'https://dsu-sandbox.dk-hostmaster.dk/1.0',
     'http://localhost:3000/1.0',
@@ -15,13 +15,13 @@ Readonly::Array my @endpoints => (
 );
 
 my $algorithms = {
-    '8: RSA/SHA-256'                     => 8, 
+    '8: RSA/SHA-256'                     => 8,
     '10: RSA/SHA-512'                    => 10,
     '13: ECDSA Curve P-256 with SHA-256' => 13,
     '14: ECDSA Curve P-384 with SHA-384' => 14,
 };
 my $digest_types = {
-    '1: SHA-1'   => 1, 
+    '1: SHA-1'   => 1,
     '2: SHA-256' => 2,
     '4: SHA-384' => 4,
 };
@@ -31,7 +31,7 @@ any '/' => sub {
 
   my $params = $self->req->params->to_hash;
 
-  $self->render('index', 
+  $self->render('index',
     version      => $VERSION,
     domain       => 'eksempel.dk',
     userid       => 'TESTUSER-DK',
@@ -56,7 +56,7 @@ get '/prepare' => sub {
     $params->{'digest1'}     = 'DS_DELETE';
 
     foreach my $param (grep !/(\w+1|domain|userid|password|endpoint)/, keys %{$params}) {
-        delete $params->{$param};        
+        delete $params->{$param};
     }
   }
 
@@ -85,7 +85,7 @@ get '/submit' => sub {
 
         app->log->info('Request succeeded, evaluating response (hack)');
 
-        #here be json/text/xml parsing code, but since we only want to demonstrate protocol 
+        #here be json/text/xml parsing code, but since we only want to demonstrate protocol
         #and leave the actual use of the result up to the user, we just hack it
         if ($code == 200) {
             $message  = "Upload of DS records was succesful $result";
@@ -107,7 +107,7 @@ get '/submit' => sub {
         app->log->info($code.' '.$message.'('.$subcode.')');
     }
 
-    $self->render('submit', 
+    $self->render('submit',
         version => $VERSION,
         message => $message,
         code    => $code,
@@ -268,7 +268,7 @@ __DATA__
         % } else {
         <option value="<%= $e %>"><%= $e %></option>
         % }
-    % } 
+    % }
     </select>
     </div>
 
@@ -341,7 +341,7 @@ __DATA__
                 send_to_endpoint($('#form'));
             }
         );
-      
+
         // for handling click of the delete button
         $('#delete').on('click', function() {
                 $('#action').val('delete');
@@ -349,7 +349,7 @@ __DATA__
             }
         );
 
-        // for handling click of the delete button
+        // for handling click of the edit button
         $('#edit').on('click', function() {
                 $('#form').attr("action", '/');
                 $("#form").attr("method", 'post');
@@ -367,7 +367,7 @@ __DATA__
         $('#clear').on('click', function() {
                 resetForm($('#form'));
             }
-        );      
+        );
     </script>
 
 @@ layouts/default.html.ep
@@ -408,6 +408,6 @@ __DATA__
     <script src="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 
     %= include 'javascript'
-    
+
   </body>
 </html>

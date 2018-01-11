@@ -7,7 +7,8 @@ RUN apt-get install -y curl build-essential carton libssl-dev
 WORKDIR /usr/src/app
 COPY cpanfile.snapshot /usr/src/app
 COPY cpanfile /usr/src/app
-RUN carton install --deployment
+#RUN carton install --deployment
+RUN carton install
 
 COPY . /usr/src/app
 EXPOSE 5000
