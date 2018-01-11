@@ -7,8 +7,8 @@
 
 ## 1.2.0 2017-01-04, feature release
 
-- Added enumerations of algorithms 13 and 14
-- Added enumeration of digest type 4
+- Added enumerations of algorithms 13 and 14 [#5]
+- Added enumeration of digest type 4 [#5]
 
 
 ## 1.1.1 2016-10-19, bug fix release
