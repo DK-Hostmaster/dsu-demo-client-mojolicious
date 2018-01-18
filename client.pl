@@ -12,6 +12,7 @@ Readonly::Array my @endpoints => (
     'https://dsu-sandbox.dk-hostmaster.dk/1.0',
     'http://localhost:3000/1.0',
     'http://dsu-server:5000/1.0',
+    'http://dsu-server:3000/1.0',
 );
 
 my $algorithms = {
